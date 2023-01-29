@@ -153,14 +153,40 @@ def greedyBestFirst(graph, current,  end, visited):
     return None
 
 
+def aStarHelper(element):
+    return element[1] + element[3]
 
-def aStart(graph, current,  end, visited):
-    
+def aStar(graph, current, end, visited):
+    if current == end:
+        return end
+
+    if len(visited) == len(graph):
+        return None
+
+    options = []
+
+    #Add the children to the options
+    for elem in graph:
+        if elem[0] == current and elem not in visited:
+            options.append(elem)
+
+    #Sort the array by smallest heuristic + distance
+    options.sort(key=aStarHelper)
+
+    #Loop through the options
+    for elem in options:
+        visited.append(elem)
+
+        ans = aStar(graph, elem[2], end, visited)
+        if ans == None:
+            continue
+        else:
+            return elem[0] + "-" + ans
 
 
 graph = graphInit()
 
-print("DFS")
+print("Depth First Search")
 dfs = depthFirst(graph, "S", "F", [])
 if dfs:
     print(dfs)
@@ -169,7 +195,7 @@ else:
 
 
 
-print("BFS")
+print("Breadth First Search")
 bfs = breadthFirst(graph, "S", "F", [graph[0]])
 if bfs:
     print(bfs)
@@ -196,8 +222,8 @@ else:
 
 
 
-print("A* Searhc")
-aStar = aStart(graph, "S", "F", [graph[0]])
+print("A* Search")
+aStar = aStar(graph, "S", "F", [])
 if aStar:
     print(aStar)
 else:
