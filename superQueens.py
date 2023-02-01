@@ -13,16 +13,14 @@ def createBoard(n):
 
 
 def printBoard(board):
-
     for i in range(len(board)):
-
         for j in range(len(board[i])):
             if board[i][j] == "Q":
                 print('Q', end=' ')
             else:
                 print('.', end=' ')
-
         print()
+
 
 def countColisions(board, n):
     hits = 0
@@ -102,8 +100,6 @@ def countColisions(board, n):
                 if row - 1 >= 0 and column - 2 >= 0:
                     if board[row-1][column-2] == "Q":
                         hits += 1
-
-                print("Hits after, ", hits)
     return hits/n
 
 
@@ -120,50 +116,9 @@ def isValid(board, pos):
 
     return True
 
-
-def moveQueen(n, board, level, conflicts, pos, bestBoad):
-    if level == 0:
-        return bestBoad, conflicts
-
-    #If you can shift the piece left by 1 on it's original row, do it
-    if pos[0] - 1 >= 0 and pos[1] == level - 1:
-        newPos = [pos[0] - 1, pos[1]]
-
-    #If you cannot shift it left anymore because it's at the left most position, return it and shift it upwards
-    elif pos[0] == 0 and pos[1] == level - 1:
-        newPos = pos[level - 1, pos[1] - 1]
-
-    #If you've already shift it left, trying moving it up
-    elif pos[1] - 1 >= 0 and pos[0] == level - 1:
-        newPos = [pos[0], pos[1] - 1]
-
-    #if you've tried going all the way left, and all the way right, reset it and go one level higher
-    else:
-        newPos = [level - 1, level - 1]
-
-    if newPos != [level - 1, level - 1]:
-        #Validate if the move is legal
-        if isValid(board, newPos):
-            newBoard = board.copy()
-
-            newBoard[pos[0]][pos[1]] = "."
-            newBoard[newPos[0]][newPos[1]] = "Q"
-            colisions = countColisions(newBoard, n)
-
-            if colisions < conflicts:
-                bestBoad = newBoard.copy()
-                conflicts = colisions
-
-        return moveQueen(n, board, level, conflicts, newPos, bestBoad)
-
-    else:
-        board[pos[0]][pos[1]] = "."
-        board[newPos[0]][newPos[1]] = "Q"
-
-        return moveQueen(n, board, level - 1, conflicts, [pos[0] - 1, pos[1] - 1], bestBoad)
-
 # Moves the queen down one row, if at the bottom, returns None
 def moveQueenDown(board, column):
+    print("Type of board: ", type(board))
     for i in range(len(board)):
         if board[i][column] == "Q":
             if i + 1 < len(board):
@@ -179,6 +134,9 @@ def popQueen(board, row):
         if board[row][i] == "Q":
             board[row][i] = "."
             return board
+
+    print("ERROR, NO QUEEN FOUND")
+    print(board)
 
 
 #Places the queen in the first open row in that queens column
@@ -198,22 +156,41 @@ def placeQueen(board, column):
 
 
 def superQueens(cur_board, best_board, size, conflicts, row):
-    if row == -1:
+    print("LOOPS")
+    print("Current board: ", cur_board)
+    print("Best board: ", best_board)
+    print("Size: ", size)
+    print("Conflicts: ", conflicts)
+    print("Row: ", row)
+
+    if row <= -1:
         return cur_board, conflicts
 
-    if moveQueenDown(cur_board, row) is None: #If you cannot move the queen down a slot in a legal move
+    #If you cannot move the queen down a slot in a legal move, ie. it's at the bottom
+    if moveQueenDown(cur_board, row) is None:
+        print("row being passed = ", row)
         cur_board = popQueen(cur_board, row) #Pop the queen off the board
+        print("Calling loop on row: ", row - 1)
         return superQueens(cur_board, best_board, size, conflicts, row - 1) #Move to the next queen
 
     else:
         for i in range(row, size - 1):
             cur_board = placeQueen(cur_board, i)
 
-        best_board, conflicts = countColisions(cur_board, size)
+        print("row = ", row)
+        print("size -1 = ", size - 1)
+        print("cur_board: ", cur_board)
+
+        colisions = countColisions(cur_board, size)
+        if colisions < conflicts:
+            best_board = cur_board.copy()
+            conflicts = colisions
 
         for i in range(row, size - 1):
             cur_board = popQueen(cur_board, i)
 
+        print("Calling loop on row: ", row + 1)
+        print("calling from here------------------")
         return superQueens(cur_board, best_board, size, conflicts, row + 1)
 
 
