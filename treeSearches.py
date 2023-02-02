@@ -156,6 +156,7 @@ def greedyBestFirst(graph, current,  end, visited):
 def aStarHelper(element):
     return element[1] + element[3]
 
+
 def aStar(graph, current, end, visited):
     if current == end:
         return end
