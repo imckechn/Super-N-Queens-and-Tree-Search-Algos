@@ -135,7 +135,6 @@ def moveQueenDown(board, column):
                 print("Moving queen down at: ", i, column)
                 printBoard(board)
                 return board, True
-            
 
     print("Queen at bottom")
     printBoard(board)
@@ -183,7 +182,7 @@ def isQueen(board, column):
         return False
 
 
-def superQueens(cur_board, best_board, size, conflicts, row):
+def superQueens(cur_board, best_board, size, conflicts, column):
     print("LOOPS")
     print("Size: ", size)
     print("Conflicts: ", conflicts)
@@ -193,28 +192,61 @@ def superQueens(cur_board, best_board, size, conflicts, row):
     print("Best board: ")
     printBoard(best_board)
 
-    if row == size - 1:
-        popQueen(cur_board, row)
-        return best_board, conflicts
+    while(isQueenAtBottom(cur_board, column) == False):
+        if isQueenAtBottom(cur_board,column):
+            popQueen(cur_board, column)
+            superQueens(cur_board, best_board, size, conflicts, column - 1)
 
-    if row == size:
-        return best_board, conflicts
+        else:
+            ans = canMoveDown(cur_board, column)
 
-    if isQueenAtBottom(cur_board, row) is False:
-        cur_board, sucess  = moveQueenDown(cur_board, row)
+            if ans:
+                moveQueenDown(cur_board, column)
 
-        if sucess is False:
-            superQueens(cur_board, best_board, size, conflicts, row + 1)
-            moveQueenDown(cur_board, row)
-            for i in range(row + 1, size):
-                placeQueen(cur_board, i)
+                for i in range(column + 1, size - 1):
+                    placeQueen(cur_board, i)
 
-            conflicts = countColisions(cur_board, size)
-            if conflicts < best_conflicts:
-                best_board = cur_board
-                best_conflicts = conflicts
+                superQueens(cur_board, best_board, size, conflicts, column + 1)
 
-            superQueens(cur_board, best_board, size, conflicts, row + 1)
+            else:
+                for i in range(column + 1, size - 1):
+                    popQueen(cur_board, i)
+                
+                placeQueen(cur_board, column)
+
+                for i in range(column + 1, size - 1):
+                    placeQueen(cur_board, i)
+            
+                superQueens(cur_board, best_board, size, conflicts, column + 1)
+
+
+
+
+    # if row == size - 1:
+    #     popQueen(cur_board, row)
+    #     return best_board, conflicts
+
+    # if row == size:
+    #     return best_board, conflicts
+
+    # if isQueenAtBottom(cur_board, row) is False:
+    #     cur_board, sucess  = moveQueenDown(cur_board, row)
+
+    #     if sucess is False:
+    #         superQueens(cur_board, best_board, size, conflicts, row + 1)
+    #         moveQueenDown(cur_board, row)
+    #         for i in range(row + 1, size):
+    #             placeQueen(cur_board, i)
+
+    #         conflicts = countColisions(cur_board, size)
+    #         if conflicts < best_conflicts:
+    #             best_board = cur_board
+    #             best_conflicts = conflicts
+
+    #         superQueens(cur_board, best_board, size, conflicts, row + 1)
+
+
+
 
 
     # if row == -1 or conflicts == 0:
