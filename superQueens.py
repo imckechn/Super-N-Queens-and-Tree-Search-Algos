@@ -10,15 +10,12 @@ def createBoard(n):
     board = []
     for i in range(n):
         board.append([])
-        best_brd.append([])
         for j in range(n):
             if i == j:
                 board[i].append("Q")
-                best_brd[i].append("Q")
 
             else:
                 board[i].append(".")
-                best_brd[i].append(".")
 
     return board
 
@@ -57,6 +54,7 @@ def countCollisions(board):
                     column += 1
                     if board[row][column] == "Q":
                         hits += 1
+                        break
 
                 # Check diagonally up and to the left
                 row = i
@@ -66,6 +64,7 @@ def countCollisions(board):
                     column -= 1
                     if board[row][column] == "Q":
                         hits += 1
+                        break
 
                 # Check diagonally down and to the left
                 row = i
@@ -75,6 +74,7 @@ def countCollisions(board):
                     column -= 1
                     if board[row][column] == "Q":
                         hits += 1
+                        break
 
 
                 # Check diagonally down and to the right
@@ -85,6 +85,7 @@ def countCollisions(board):
                     column += 1
                     if board[row][column] == "Q":
                         hits += 1
+                        break
 
                 # Now check fo the knight moves
                 #Checking to the right of the piece
@@ -122,8 +123,7 @@ def countCollisions(board):
                     if board[row-1][column-2] == "Q":
                         hits += 1
 
-    print("Hits", hits)
-    return hits/n
+    return hits / 2
 
 
 def isValid(board, pos):
@@ -221,7 +221,6 @@ def canMoveDown(board, column):
     #Need to check if there is open rows on the board when only looking to the right side of the current Queen
     queenFound = False
     canMoveRight = True
-
     for i in range(len(board)):
         if board[i][column] == "Q":
             queenFound = True
@@ -237,7 +236,6 @@ def canMoveDown(board, column):
             if queenInRow:
                 canMoveRight = False
                 break
-            break
 
 
     # Need to check if there is open rows on the board when only looking to the left side of the current Queen
@@ -258,7 +256,9 @@ def canMoveDown(board, column):
             if queenInRow:
                 canMoveLeft = False
                 break
-            break
+
+            if queenInRow == False and canMoveRight == True:
+                return 0
 
     if canMoveLeft and canMoveRight:
         #Check if it's already at the bottom
@@ -293,28 +293,21 @@ def saveState(cur_board, collisions):
     global best_collisions
 
     if collisions < best_collisions:
+        best_brd = []
 
         for i in range(len(cur_board)):
+            best_brd.append([])
+
             for j in range(len(cur_board)):
                 if cur_board[i][j] == "Q":
-                    best_brd[i][j] = "Q"
+                    best_brd[i].append("Q")
                 else:
-                    best_brd[i][j] = "."
+                    best_brd[i].append(".")
 
         best_collisions = collisions
 
 
 def superQueens(cur_board, best_board, size, column):
-    global conflicts
-
-    if column == -1:
-        if size == 1:
-            return best_board, 0
-        if size == 0:
-            return best_board, 0
-
-        return best_board, conflicts
-
 
     if isQueenAtBottom(cur_board,column) == True and board[len(board) - 1][0] != "Q":
         popQueen(cur_board, column)
@@ -335,10 +328,6 @@ def superQueens(cur_board, best_board, size, column):
 
             collisions = countCollisions(cur_board)
             saveState(cur_board, collisions)
-            print("BOARDS")
-            printBoard(cur_board)
-            print()
-            printBoard(best_brd)
 
             #return superQueens(cur_board, best_board, size, column + 1)
             return column + 1
@@ -386,6 +375,18 @@ while True:
 
     break
 
+
+if n == 0:
+    print("Best Board:")
+    print("Conflicts: 0")
+    exit()
+
+if n == 1:
+    print("Best Board:")
+    print("Q")
+    print("Conflicts: 0")
+    exit()
+
 board = createBoard(n)
 best_board = createBoard(n)
 best_collisions = n
@@ -395,8 +396,8 @@ while(isInEndState(board) == False):
     ans = superQueens(board, best_board, n, ans)
 
 
-# print("Best Board: ")
-# printBoard(best_brd)
+print("Best Board: ")
+printBoard(best_brd)
 # print("board")
 # printBoard(board)
 print("Conflicts: ", best_collisions)

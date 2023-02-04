@@ -54,6 +54,7 @@ def breadthFirst(graph, current,  end, visited):
         answer += v+"-"
 
         if v == end:
+            answer = answer[:-1] #Remove the last dash
             return answer
 
         for elem in graph:
@@ -190,7 +191,7 @@ graph = graphInit()
 print("Depth First Search")
 dfs = depthFirst(graph, "S", "F", [])
 if dfs:
-    print(dfs)
+    print('S-' + dfs)
 else:
     print("No Solution")
 
@@ -229,5 +230,3 @@ if aStar:
     print(aStar)
 else:
     print("No Solution")
-
-
