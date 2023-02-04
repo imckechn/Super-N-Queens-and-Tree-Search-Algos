@@ -1,4 +1,9 @@
+
+# Initialize the graph, contains one loop and multiple paths to goal node
+# *Starting Node is S, Goal Node is F *
+# Returns the graph
 def graphInit():
+
     # [ starting node, heuristic cost, ending node, vertice cost ]
     graph = [
         ['S', 8, 'A', 3],
